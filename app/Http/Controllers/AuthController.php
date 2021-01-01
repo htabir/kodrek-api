@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -23,7 +24,7 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 400);
         }
 
-        $token_validity = 7 * 24 * 60;
+        $token_validity = 24 * 60;
 
         $this->guard()->factory()->setTTL($token_validity);
 
@@ -61,16 +62,18 @@ class AuthController extends Controller
         return $this->respondWithToken($this->guard()->refresh());
     }
 
-    protected function guard(){
-        return Auth::guard();
+    protected function respondWithToken($token){
+        $token_validity = 24 * 60;
+
+        $this->guard()->factory()->setTTL($token_validity);
+        return response()->json([
+            'token' => $token,
+            'token_type' => 'bearer',
+            'token_validity' => $this->guard()->factory()->getTTL()*60
+        ]);
     }
 
-    protected function respondWithToken($token)
-    {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
-        ]);
+    protected function guard(){
+        return Auth::guard();
     }
 }
