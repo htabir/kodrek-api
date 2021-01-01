@@ -59,7 +59,7 @@ class CodeforcesController extends Controller
             }else{
                 $others++;
                 if(!(array_key_exists($id,$stats))){
-                    $unStats[$id] = $subs['verdict'];
+                    $unStats[$id] = "OTHERS";
                 }
             }
         }
