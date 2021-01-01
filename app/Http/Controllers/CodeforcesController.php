@@ -21,37 +21,47 @@ class CodeforcesController extends Controller
     }
 
     public function total($time, $id){
-        $date =  strtotime(date("Y-m-d").' '.'0:6:0');
-        $response = Http::get('https://codeforces.com/api/user.status?handle='.$id);
-        $totalSub = 0;  $ac = 0; $wa = 0; $others = 0;
-        $stats=array();
+        $date =  strtotime(date("Y-m-d").' '.'0:6:0');      // setting date for today
+        $response = Http::get('https://codeforces.com/api/user.status?handle='.$id); // response for a user id
+        $totalSub = 0;  $ac = 0; $wa = 0; $others = 0;      // counter
+        $stats=array();     // list of accepted problems
+        $unStats=array();   // list of unsolved
+
 
         foreach($response['result'] as $subs){
-            if($time == "today" && $subs['creationTimeSeconds'] < $date){
+
+            if($time == "today" && $subs['creationTimeSeconds'] < $date){   // condition for today
                 break;
             }
-            $totalSub++;
+            $totalSub++;// submission counter
             if(isset($subs['contestId'])){
                 $id = $subs['contestId'].$subs['problem']['index'];
             }else{
                 $id = $subs['problem']['problemsetName'].$subs['problem']['index'];
             }
 
-            if($subs['verdict'] == "OK"){
-                $ac++;
-            }else if($subs['verdict'] == "WRONG_ANSWER"){
-                $wa++;
-            }else{
-                $others++;
-            }
-
-            if(array_key_exists($id,$stats)){
-                continue;
-            }else{
+            if(!(array_key_exists($id,$stats))){
                 if($subs['verdict'] == "OK"){
                     $stats[$id] = $subs['verdict'];
-                }                
-            }            
+                }
+            } 
+            
+            if($subs['verdict'] == "OK"){
+                $ac++;
+                if(array_key_exists($id,$stats) && array_key_exists($id,$unStats)){
+                    unset($unStats[$id]);
+                }
+            }else if($subs['verdict'] == "WRONG_ANSWER"){
+                $wa++;
+                if(!(array_key_exists($id,$stats))){
+                    $unStats[$id] = $subs['verdict'];
+                }
+            }else{
+                $others++;
+                if(!(array_key_exists($id,$stats))){
+                    $unStats[$id] = $subs['verdict'];
+                }
+            }
         }
         
         return response()->json([
@@ -60,7 +70,8 @@ class CodeforcesController extends Controller
             'accepted'  =>  $ac,
             'wrong_answer'  =>  $wa,
             'others'  =>  $others,
-            'set'   => $stats
+            'solvedSet'   => $stats,
+            'unsolvedSet'   => $unStats
         ]);
     }
 
