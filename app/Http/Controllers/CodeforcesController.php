@@ -17,12 +17,16 @@ class CodeforcesController extends Controller
 
     public function check($id){
         $response = Http::get('https://codeforces.com/api/user.info?handles='.$id);
-        return $response;
+        
+        
     }
 
     public function total($time, $id){
         $date =  strtotime(date("Y-m-d").' '.'0:6:0');      // setting date for today
         $response = Http::get('https://codeforces.com/api/user.status?handle='.$id); // response for a user id
+
+        return $response;
+        
         $totalSub = 0;  $ac = 0; $wa = 0; $others = 0;      // counter
         $stats=array();     // list of accepted problems
         $unStats=array();   // list of unsolved
@@ -33,6 +37,7 @@ class CodeforcesController extends Controller
             if($time == "today" && $subs['creationTimeSeconds'] < $date){   // condition for today
                 break;
             }
+
             $totalSub++;// submission counter
             if(isset($subs['contestId'])){
                 $id = $subs['contestId'].$subs['problem']['index'];
@@ -48,19 +53,14 @@ class CodeforcesController extends Controller
             
             if($subs['verdict'] == "OK"){
                 $ac++;
-                if(array_key_exists($id,$stats) && array_key_exists($id,$unStats)){
-                    unset($unStats[$id]);
-                }
+                $stats[$id] = $subs['verdict'];
+                unset($unStats[$id]);
             }else if($subs['verdict'] == "WRONG_ANSWER"){
                 $wa++;
-                if(!(array_key_exists($id,$stats))){
-                    $unStats[$id] = $subs['verdict'];
-                }
+                $unStats[$id] = $subs['verdict'];
             }else{
                 $others++;
-                if(!(array_key_exists($id,$stats))){
-                    $unStats[$id] = "OTHERS";
-                }
+                $unStats[$id] = "OTHERS";
             }
         }
         
