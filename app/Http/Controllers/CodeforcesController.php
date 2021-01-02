@@ -24,8 +24,6 @@ class CodeforcesController extends Controller
     public function total($time, $id){
         $date =  strtotime(date("Y-m-d").' '.'0:6:0');      // setting date for today
         $response = Http::get('https://codeforces.com/api/user.status?handle='.$id); // response for a user id
-
-        return $response;
         
         $totalSub = 0;  $ac = 0; $wa = 0; $others = 0;      // counter
         $stats=array();     // list of accepted problems
