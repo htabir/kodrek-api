@@ -51,7 +51,9 @@ class OjController extends Controller
     //     ]);
     // }
 
-    public function cfOverall($period, $id){
+    public function cfOverall(Request $request){
+        $id = $request['id'];
+        $period = $request['period'];
         if($id == 'me'){
             $id = $this->user['username'];
         }
@@ -152,7 +154,9 @@ class OjController extends Controller
         }
     }
 
-    public function uvaOverall($period, $id){
+    public function uvaOverall(Request $request){
+        $id = $request['id'];
+        $period = $request['period'];
         if($id == 'me'){
             $id = $this->user['username'];
         }
