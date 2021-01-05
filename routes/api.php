@@ -25,23 +25,18 @@ Route::group([
     Route::post('refresh', 'AuthController@refresh');
 });
 
-Route::group([
-    'middleware'=>  'api',
-    'namespace' =>  'App\Http\Controllers',
-    'prefix'    =>  'cf'
-], function ($router){
-    Route::post('/check/{id}', 'CodeforcesController@check');
-    Route::post('/total/{time}/{id}', 'CodeforcesController@total');
-});
 
 Route::group([
     'middleware'=>  'api',
     'namespace' =>  'App\Http\Controllers',
-    'prefix'    =>  'uva'
+    'prefix'    =>  'oj'
 ], function ($router){
-    Route::post('/check/{id}', 'UvaController@check');
-    Route::post('/total/{time}/{id}', 'UvaController@total');
+    Route::post('/addCf/{id}', 'OjController@addCf');
+    Route::post('/addUva/{id}', 'OjController@addUva');
+    Route::post('/overall/{id}', 'OjController@overall');
 });
+
+
 
 
 

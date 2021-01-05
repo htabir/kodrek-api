@@ -62,6 +62,7 @@ class AuthController extends Controller
         return $this->respondWithToken($this->guard()->refresh());
     }
 
+
     protected function respondWithToken($token){
         $token_validity = 24 * 60;
 

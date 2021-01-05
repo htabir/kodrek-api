@@ -52,4 +52,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     } 
+
+    public function ojs(){
+        return $this->hasMany(Oj::class, 'username', 'username');
+    }
 }
