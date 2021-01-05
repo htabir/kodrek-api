@@ -35,26 +35,31 @@ class OjController extends Controller
         return response()->json(['status' => 'ok', 'OJ' => $oj]);
     }
 
-    public function overall($id){
-        $this->cfOverall($id);
-        $this->uvaOverall($id);
-        $cfStats = Oj::where('ojid', $id)
-        ->where('ojname', 'CF')->first();
-        $uvaStats = Oj::where('ojid', $id)
-        ->where('ojname', 'UVA')->first();
-        return response()->json([
-            'cf' => $cfStats,
-            'uva' => $uvaStats
-        ]);
-    }
+    // public function overall($id){
+    //     if($id == 'me'){
+    //         $id = $this->user['username'];
+    //     }
+    //     $this->cfOverall($id);
+    //     $this->uvaOverall($id);
+    //     $cfStats = Oj::where('ojid', $id)
+    //                 ->where('ojname', 'CF')->first();
+    //     $uvaStats = Oj::where('ojid', $id)
+    //                 ->where('ojname', 'UVA')->first();
+    //     return response()->json([
+    //         'cf' => $cfStats,
+    //         'uva' => $uvaStats
+    //     ]);
+    // }
 
-    public function cfOverall($id){
+    public function cfOverall($period, $id){
         if($id == 'me'){
             $id = $this->user['username'];
         }
 
-        $stats = Oj::where('ojid', $id)
+        $stats = Oj::where('username', $id)
                     ->where('ojname', 'CF')->first();
+
+        $id = $stats['ojid'];
         
         $newCheckpoint = 0;
         $oldCheckpoint = $stats['checkpoint'];
@@ -64,7 +69,7 @@ class OjController extends Controller
         $disAc = ($stats['solvedSet'] == null) ? array() : $stats['solvedSet'];
         $disUn = ($stats['unsolvedSet'] == null) ? array() : $stats['unsolvedSet'];
 
-        $count = 1; $flag = 1; $gap = $oldCheckpoint == 0 ? 5000 : 50;
+        $count = 1; $flag = 1; $gap = $oldCheckpoint == 0 ? 5000 : 25;
         
         while($flag){
             $response = Http::get('https://codeforces.com/api/user.status?handle='.$id.'&from='.$count.'&count='.$count+$gap);
@@ -132,26 +137,30 @@ class OjController extends Controller
                 'unsolvedSet'   => $disUn
             ]);
 
-        // return response()->json([
-        //     'totalSub'  =>  $totalSub,
-        //     'disAc'     => count($disAc),            
-        //     'totalAc'   =>  $totalAc,
-        //     'totalWa'   =>  $totalWa,
-        //     'totalOt'   =>  $totalOt,
-        //     'solvedSet' => $disAc,
-        //     'unsolvedSet'   => $disUn
-        // ]);
+        if($period == 'overall'){
+            return response()->json([
+                'totalSub'  =>  $totalSub,
+                'disAc'     => count($disAc),            
+                'totalAc'   =>  $totalAc,
+                'totalWa'   =>  $totalWa,
+                'totalOt'   =>  $totalOt,
+                'solvedSet' => $disAc,
+                'unsolvedSet'   => $disUn
+            ]);
+        }else{
+
+        }
     }
 
-    public function uvaOverall($id){
+    public function uvaOverall($period, $id){
         if($id == 'me'){
             $id = $this->user['username'];
         }
 
-        $stats = Oj::where('ojid', $id)
-                    ->where('ojname', 'UVA')->first();
+        $stats = Oj::where('username', $id)
+                    ->where('ojname', 'CF')->first();
 
-        
+        $id = $stats['ojid'];        
 
         $newCheckpoint = 0;
         $oldCheckpoint = $stats['checkpoint'];
@@ -216,15 +225,19 @@ class OjController extends Controller
                 'unsolvedSet'   => $disUn
             ]);
 
-        // return response()->json([
-        //     'totalSub'  =>  $totalSub,
-        //     'disAc'     => count($disAc),            
-        //     'totalAc'   =>  $totalAc,
-        //     'totalWa'   =>  $totalWa,
-        //     'totalOt'   =>  $totalOt,
-        //     'solvedSet' => $disAc,
-        //     'unsolvedSet'   => $disUn
-        // ]);  
+        if($period == 'overall'){
+            return response()->json([
+                'totalSub'  =>  $totalSub,
+                'disAc'     => count($disAc),            
+                'totalAc'   =>  $totalAc,
+                'totalWa'   =>  $totalWa,
+                'totalOt'   =>  $totalOt,
+                'solvedSet' => $disAc,
+                'unsolvedSet'   => $disUn
+            ]);  
+        }else{
+
+        }
 
     }
 
