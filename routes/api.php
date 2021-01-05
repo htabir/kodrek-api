@@ -33,15 +33,10 @@ Route::group([
 ], function ($router){
     Route::post('/addCf/{id}', 'OjController@addCf');
     Route::post('/addUva/{id}', 'OjController@addUva');
+    Route::post('/cf/{period}/{id}', 'OjController@cfOverall');
+    Route::post('/uva/{period}/{id}', 'OjController@cfOverall');
 });
 
-Route::group([
-    'middleware'=>  'api',
-    'namespace' =>  'App\Http\Controllers',
-], function ($router){
-    Route::post('cf/{period}/{id}', 'OjController@cfOverall');
-    Route::post('uva/{period}/{id}', 'OjController@uvaOverall');
-});
 
 
 
