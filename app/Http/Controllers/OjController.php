@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Oj;
 use App\Models\User;
+use App\Models\UvaProblem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -13,7 +14,7 @@ class OjController extends Controller
     protected $user;
 
     public function __construct(){
-        $this->middleware('auth:api');
+        $this->middleware('auth:api', ['except' => ['refreshUva']]);
         $this->user = $this->guard()->user();
     }
 
@@ -35,25 +36,7 @@ class OjController extends Controller
         return response()->json(['status' => 'ok', 'OJ' => $oj]);
     }
 
-    // public function overall($id){
-    //     if($id == 'me'){
-    //         $id = $this->user['username'];
-    //     }
-    //     $this->cfOverall($id);
-    //     $this->uvaOverall($id);
-    //     $cfStats = Oj::where('ojid', $id)
-    //                 ->where('ojname', 'CF')->first();
-    //     $uvaStats = Oj::where('ojid', $id)
-    //                 ->where('ojname', 'UVA')->first();
-    //     return response()->json([
-    //         'cf' => $cfStats,
-    //         'uva' => $uvaStats
-    //     ]);
-    // }
-
-    public function cfOverall(Request $request){
-        $id = $request['id'];
-        $period = $request['period'];
+    public function cfOverall($id){
         if($id == 'me'){
             $id = $this->user['username'];
         }
@@ -104,6 +87,10 @@ class OjController extends Controller
                     $totalAc++;
                     if(!isset($disAc[$probId])){
                         $disAc[$probId] = $subs['creationTimeSeconds'];
+                    }else{
+                        if($disAc[$probId] < $subs['creationTimeSeconds']){
+                            $disAc[$probId] = $subs['creationTimeSeconds'];
+                        }
                     }
                     unset($disUn[$probId]);
                 }else if($subs['verdict'] == "WRONG_ANSWER"){
@@ -111,6 +98,10 @@ class OjController extends Controller
                     if(!array_key_exists($probId, $disAc)){
                         if(!isset($disUn[$probId])){
                             $disUn[$probId] = $subs['creationTimeSeconds'];
+                        }else{
+                            if($disUn[$probId] < $subs['creationTimeSeconds']){
+                                $disUn[$probId] = $subs['creationTimeSeconds'];
+                            }
                         }
                     }
                 }else{
@@ -118,6 +109,10 @@ class OjController extends Controller
                     if(!array_key_exists($probId, $disAc)){
                         if(!isset($disUn[$probId])){
                             $disUn[$probId] = $subs['creationTimeSeconds'];
+                        }else{
+                            if($disUn[$probId] < $subs['creationTimeSeconds']){
+                                $disUn[$probId] = $subs['creationTimeSeconds'];
+                            }
                         }
                     }
                 }
@@ -139,30 +134,24 @@ class OjController extends Controller
                 'unsolvedSet'   => $disUn
             ]);
 
-        if($period == 'overall'){
-            return response()->json([
-                'totalSub'  =>  $totalSub,
-                'disAc'     => count($disAc),            
-                'totalAc'   =>  $totalAc,
-                'totalWa'   =>  $totalWa,
-                'totalOt'   =>  $totalOt,
-                'solvedSet' => $disAc,
-                'unsolvedSet'   => $disUn
-            ]);
-        }else{
-
-        }
+        return response()->json([
+            'totalSub'  =>  $totalSub,
+            'disAc'     => count($disAc),            
+            'totalAc'   =>  $totalAc,
+            'totalWa'   =>  $totalWa,
+            'totalOt'   =>  $totalOt,
+            'solvedSet' => $disAc,
+            'unsolvedSet'   => $disUn
+        ]); 
     }
 
-    public function uvaOverall(Request $request){
-        $id = $request['id'];
-        $period = $request['period'];
+    public function uvaOverall($id){
         if($id == 'me'){
             $id = $this->user['username'];
         }
 
         $stats = Oj::where('username', $id)
-                    ->where('ojname', 'CF')->first();
+                    ->where('ojname', 'UVA')->first();
 
         $id = $stats['ojid'];        
 
@@ -189,7 +178,7 @@ class OjController extends Controller
                 }
                    
                 $totalSub++;
-                $probId = 'uva'.$subs[1];
+                $probId = UvaProblem::where('uvaid', $subs[1])->first()->uvaNum;
 
                 if($subs[2] == "90"){
                     $totalAc++;
@@ -229,20 +218,29 @@ class OjController extends Controller
                 'unsolvedSet'   => $disUn
             ]);
 
-        if($period == 'overall'){
-            return response()->json([
-                'totalSub'  =>  $totalSub,
-                'disAc'     => count($disAc),            
-                'totalAc'   =>  $totalAc,
-                'totalWa'   =>  $totalWa,
-                'totalOt'   =>  $totalOt,
-                'solvedSet' => $disAc,
-                'unsolvedSet'   => $disUn
-            ]);  
-        }else{
+        return response()->json([
+            'totalSub'  =>  $totalSub,
+            'disAc'     => count($disAc),            
+            'totalAc'   =>  $totalAc,
+            'totalWa'   =>  $totalWa,
+            'totalOt'   =>  $totalOt,
+            'solvedSet' => $disAc,
+            'unsolvedSet'   => $disUn
+        ]); 
 
+    }
+
+    public function refreshUva(){
+
+        $response = Http::get('https://uhunt.onlinejudge.org/api/p');
+        $response =  json_decode($response);
+
+        foreach($response as $probs){
+            if((UvaProblem::where('uvaId', '=', $probs[0])->first()) == null){
+                $uva = UvaProblem::create(['uvaId' => $probs[0], 'uvaNum' => $probs[1]]);
+            }
         }
-
+        return 'done';
     }
 
     protected function guard(){

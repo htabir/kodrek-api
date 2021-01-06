@@ -56,4 +56,8 @@ class User extends Authenticatable implements JWTSubject
     public function ojs(){
         return $this->hasMany(Oj::class, 'username', 'username');
     }
+
+    public function preset_users(){
+        return $this->hasMany(PresetUser::class, 'username', 'username');
+    }
 }

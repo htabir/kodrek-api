@@ -33,8 +33,19 @@ Route::group([
 ], function ($router){
     Route::post('/addCf/{id}', 'OjController@addCf');
     Route::post('/addUva/{id}', 'OjController@addUva');
-    Route::post('/cf', 'OjController@cfOverall');
-    Route::post('/uva', 'OjController@uvaOverall');
+    Route::post('/cf/{id}', 'OjController@cfOverall');
+    Route::post('/uva/{id}', 'OjController@uvaOverall');
+    Route::get('/uva/refresh', 'OjController@refreshUva');
+});
+
+Route::group([
+    'middleware'=>  'api',
+    'namespace' =>  'App\Http\Controllers',
+    'prefix'    =>  'preset'
+], function ($router){
+    Route::post('/create', 'PresetController@create');
+    Route::post('/set/{presetId}', 'PresetController@setPreset');
+    Route::post('/stats/{id}', 'PresetController@stats');
 });
 
 
