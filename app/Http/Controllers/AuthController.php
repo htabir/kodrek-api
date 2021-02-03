@@ -32,8 +32,15 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        return $this->respondWithToken($token);
+        $user = $this->guard()->user();
+        return response()->json([
+            'name'  => $user->name,
+            'username'  => $user->username,
+            'timezone'  => $user->timezone,
+            'token' => $token
+        ], 200);$token;
     }
+
 
     public function register(Request $request){
         $validator = Validator::make($request->all(), [

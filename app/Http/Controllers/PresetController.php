@@ -46,7 +46,7 @@ class PresetController extends Controller
                 ]);
             return response()->json([
                 'status'    =>  'ok',
-                'details'   =>  $presetUser
+                'details'   =>  $this->user->preset_users->where('status', 1),
             ]);
         }else{
             $presetUser = $this->user->preset_users->where('username', $this->user['username'])
@@ -68,7 +68,7 @@ class PresetController extends Controller
                     ]);
                 return response()->json([
                     'status'    =>  'ok',
-                    'details'   =>  $presetUser
+                    'details'   =>  $this->user->preset_users->where('status', 1),
                 ]);
             }
 
@@ -76,18 +76,28 @@ class PresetController extends Controller
 
             return response()->json([
                 'status'    =>  'ok',
-                'details'   =>  $presetUser
+                'details'   =>  $this->user->preset_users->where('status', 1),
             ]);
         }
                  
     }
 
     public function stats($id){
-        if($id == 'me'){
-            $id = $this->user['username'];
+        if(count($this->user->preset_users) == 0){
+            return response()->json([
+                'status'    => 'failed',
+                'deatails'  =>  null
+            ]);
+        }else{
+            $activePreset = $this->user->preset_users->where('status', 1)->first();
+            $problemSet = PresetProblem::where('presetId', $activePreset['presetId'])->get();
+
+            $problemSet = json_decode($problemSet);
+            shuffle($problemSet);
+
+            return $problemSet;
         }
 
-        return $id;
     }
 
     
