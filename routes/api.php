@@ -23,6 +23,9 @@ Route::group([
     Route::post('register', 'AuthController@register');
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');
+    //checking
+    Route::post('check/email', 'AuthController@checkEmail');
+    Route::post('check/username', 'AuthController@checkUsername');
 });
 
 
@@ -36,6 +39,10 @@ Route::group([
     Route::post('/cf/{id}', 'OjController@cfOverall');
     Route::post('/uva/{id}', 'OjController@uvaOverall');
     Route::get('/uva/refresh', 'OjController@refreshUva');
+    
+    //checking
+    Route::post('/check/cf', 'OjController@checkCf');
+    Route::post('/check/uva', 'OjController@checkUva');
 });
 
 Route::group([

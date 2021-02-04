@@ -14,8 +14,26 @@ class OjController extends Controller
     protected $user;
 
     public function __construct(){
-        $this->middleware('auth:api', ['except' => ['refreshUva']]);
+        $this->middleware('auth:api', ['except' => ['refreshUva', 'checkCf', 'checkUva']]);
         $this->user = $this->guard()->user();
+    }
+
+    public function checkCf(Request $request){
+        $username = $request->codeForces;
+        $response = Http::get('https://codeforces.com/api/user.info?handles='.$username);
+        if($response['status'] == "OK"){
+            return response()->json(["status" => "OK"], 200);
+        }
+        return response()->json(["status" => "FAILED"], 404);
+    }
+
+    public function checkUva(Request $request){
+        $username = $request->uva;
+        $response = Http::get('https://uhunt.onlinejudge.org/api/uname2uid/'.$username);
+        if(json_decode($response)){
+            return response()->json(["status" => "OK"], 200);
+        }
+        return response()->json(["status" => "FAILED"], 404);
     }
 
     public function addCf($id){

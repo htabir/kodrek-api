@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Validator;
 class AuthController extends Controller
 {
     public function __construct(){  // constructor
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'checkEmail', 'checkUsername']]);
     }
 
     public function login(Request $request){
@@ -38,7 +38,25 @@ class AuthController extends Controller
             'username'  => $user->username,
             'timezone'  => $user->timezone,
             'token' => $token
-        ], 200);$token;
+        ], 200);
+    }
+
+    public function checkEmail(Request $request){
+        $email = $request->email;
+        $res = User::where('email', $email)->first();
+        if($res){
+            return response()->json(["status" => "found"], 200);
+        }
+        return response()->json(["status" => "not found"], 404);
+    }
+
+    public function checkUsername(Request $request){
+        $username = $request->username;
+        $res = User::where('username', $username)->first();
+        if($res){
+            return response()->json(["status" => "found"], 200);
+        }
+        return response()->json(["status" => "not found"], 404);
     }
 
 
