@@ -24,7 +24,7 @@ class OjController extends Controller
         if($response['status'] == "OK"){
             return response()->json(["status" => "OK"], 200);
         }
-        return response()->json(["status" => "FAILED"], 404);
+        return response()->json(["status" => "FAILED"], 401);
     }
 
     public function checkUva(Request $request){
@@ -33,7 +33,7 @@ class OjController extends Controller
         if(json_decode($response)){
             return response()->json(["status" => "OK"], 200);
         }
-        return response()->json(["status" => "FAILED"], 404);
+        return response()->json(["status" => "FAILED"], 401);
     }
 
     public function addCf($id){

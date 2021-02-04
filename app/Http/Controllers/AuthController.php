@@ -45,18 +45,18 @@ class AuthController extends Controller
         $email = $request->email;
         $res = User::where('email', $email)->first();
         if($res){
-            return response()->json(["status" => "found"], 200);
+            return response()->json(["status" => "OK"], 200);
         }
-        return response()->json(["status" => "not found"], 404);
+        return response()->json(["status" => "FAILED"], 401);
     }
 
     public function checkUsername(Request $request){
         $username = $request->username;
         $res = User::where('username', $username)->first();
         if($res){
-            return response()->json(["status" => "found"], 200);
+            return response()->json(["status" => "OK"], 200);
         }
-        return response()->json(["status" => "not found"], 404);
+        return response()->json(["status" => "FAILED"], 401);
     }
 
 
