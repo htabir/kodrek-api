@@ -72,7 +72,7 @@ class OjController extends Controller
         $count = 1; $flag = 1; $gap = $oldCheckpoint == 0 ? 5000 : 25;
         
         while($flag){
-            $response = Http::get('https://codeforces.com/api/user.status?handle='.$id.'&from='.$count.'&count='.$count+$gap);
+            $response = Http::get('https://codeforces.com/api/user.status?handle='.$id.'&from='.$count.'&count='.($count+$gap));
 
             if($response['result'] == null){
                 break;
