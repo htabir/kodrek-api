@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Oj;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Validator;
 class AuthController extends Controller
 {
     public function __construct(){  // constructor
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'checkEmail', 'checkUsername']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'checkEmail', 'checkUsername', 'addCf', 'addUva']]);
     }
 
     public function login(Request $request){
@@ -45,18 +46,18 @@ class AuthController extends Controller
         $email = $request->email;
         $res = User::where('email', $email)->first();
         if($res){
-            return response()->json(["status" => "OK"], 200);
+            return response()->json(["status" => "FOUND"], 409);
         }
-        return response()->json(["status" => "FAILED"], 401);
+        return response()->json(["status" => "NOT FOUND"], 200);
     }
 
     public function checkUsername(Request $request){
         $username = $request->username;
         $res = User::where('username', $username)->first();
         if($res){
-            return response()->json(["status" => "OK"], 200);
+            return response()->json(["status" => "FOUND"], 409);
         }
-        return response()->json(["status" => "FAILED"], 401);
+        return response()->json(["status" => "NOT FOUND"], 200);
     }
 
 
@@ -68,12 +69,35 @@ class AuthController extends Controller
             'password'  =>  'required|string|min:6'
         ]);
         if($validator -> fails()){
-            return response()->json($validator->errors(), 422);
+            return response()->json(['status' => 'FAILED'], 422);
         }
         $user = User::create(array_merge($validator->validated(), 
         ['password'  =>  bcrypt($request->password)]));
 
-        return response()->json(['message' => 'User Created Successfully', 'user' => $user]);
+        if($request->has('codeforces')){
+            $this->addCf($request);
+        }
+        if($request->has('uva')){
+            $this->addUva($request);
+        }
+
+        return response()->json(['status' => 'CREATED SUCCESSFULLY'], 201);
+    }
+
+    private function addCf(Request $request){
+        $oj = new Oj;
+        $oj->username = $request->username;
+        $oj->ojName = "CF";
+        $oj->ojid = $request->codeforces;
+        $oj->save();
+    }
+
+    private function addUva(Request $request){
+        $oj = new Oj;
+        $oj->username = $request->username;
+        $oj->ojName = "UVA";
+        $oj->ojid = $request->uva;
+        $oj->save();
     }
 
     public function logout(){

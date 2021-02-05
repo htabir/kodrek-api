@@ -19,12 +19,12 @@ class OjController extends Controller
     }
 
     public function checkCf(Request $request){
-        $username = $request->codeForces;
+        $username = $request->codeforces;
         $response = Http::get('https://codeforces.com/api/user.info?handles='.$username);
         if($response['status'] == "OK"){
             return response()->json(["status" => "OK"], 200);
         }
-        return response()->json(["status" => "FAILED"], 401);
+        return response()->json(["status" => "FAILED"], 404);
     }
 
     public function checkUva(Request $request){
@@ -33,7 +33,7 @@ class OjController extends Controller
         if(json_decode($response)){
             return response()->json(["status" => "OK"], 200);
         }
-        return response()->json(["status" => "FAILED"], 401);
+        return response()->json(["status" => "FAILED"], 404);
     }
 
     public function addCf($id){
