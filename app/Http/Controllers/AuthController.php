@@ -34,6 +34,9 @@ class AuthController extends Controller
         }
 
         $user = $this->guard()->user();
+
+
+
         return response()->json([
             'name'  => $user->name,
             'username'  => $user->username,

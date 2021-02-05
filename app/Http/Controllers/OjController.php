@@ -54,10 +54,8 @@ class OjController extends Controller
         return response()->json(['status' => 'ok', 'OJ' => $oj]);
     }
 
-    public function cfOverall($id){
-        if($id == 'me'){
-            $id = $this->user['username'];
-        }
+    public function cfOverall(Request $request){
+        $id = $request->username;
 
         $stats = Oj::where('username', $id)
                     ->where('ojname', 'CF')->first();
@@ -163,10 +161,12 @@ class OjController extends Controller
         ]); 
     }
 
-    public function uvaOverall($id){
-        if($id == 'me'){
-            $id = $this->user['username'];
-        }
+    public function uvaOverall(Request $request){
+        // if($id == 'me'){
+        //     $id = $this->user['username'];
+        // }
+
+        $id = $request->username;
 
         $stats = Oj::where('username', $id)
                     ->where('ojname', 'UVA')->first();
