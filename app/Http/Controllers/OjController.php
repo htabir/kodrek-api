@@ -177,7 +177,7 @@ class OjController extends Controller
         return response()->json($disAc, 200);
     }
 
-    public function uvaOverall($id){
+    public function uvaStats($id){
         // if($id == 'me'){
         //     $id = $this->user['username'];
         // }
@@ -255,11 +255,28 @@ class OjController extends Controller
             'disAc'     => count($disAc),            
             'totalAc'   =>  $totalAc,
             'totalWa'   =>  $totalWa,
-            'totalOt'   =>  $totalOt,
-            'solvedSet' => $disAc,
-            'unsolvedSet'   => $disUn
+            'totalOt'   =>  $totalOt
         ]); 
 
+    }
+
+    public function uvaSolved($id){
+        $stats = Oj::where('username', $id)
+                    ->where('ojname', 'UVA')->first();
+
+        $disAc = ($stats['solvedSet'] == null) ? array() : $stats['solvedSet'];
+
+        return response()->json($disAc, 200);
+    }
+
+    
+    public function uvaUnsolved($id){
+        $stats = Oj::where('username', $id)
+                    ->where('ojname', 'UVA')->first();
+
+        $disAc = ($stats['unsolvedSet'] == null) ? array() : $stats['unsolvedSet'];
+
+        return response()->json($disAc, 200);
     }
 
     public function refreshUva(){

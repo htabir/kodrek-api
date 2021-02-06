@@ -41,7 +41,9 @@ Route::group([
     Route::post('/cf/solved/{id}', 'OjController@cfSolved');
     Route::post('/cf/unsolved/{id}', 'OjController@cfUnsolved');
 
-    Route::post('/uva/{id}', 'OjController@uvaOverall');
+    Route::post('/uva/stats/{id}', 'OjController@uvaStats');
+    Route::post('/uva/solved/{id}', 'OjController@uvaSolved');
+    Route::post('/uva/unsolved/{id}', 'OjController@uvaUnsolved');
     Route::get('/uva/refresh', 'OjController@refreshUva');
     
     //checking
