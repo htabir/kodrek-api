@@ -36,7 +36,11 @@ Route::group([
 ], function ($router){
     Route::post('/addCf/{id}', 'OjController@addCf');
     Route::post('/addUva/{id}', 'OjController@addUva');
-    Route::post('/cf/{id}', 'OjController@cfOverall');
+
+    Route::post('/cf/stats/{id}', 'OjController@cfStats');
+    Route::post('/cf/solved/{id}', 'OjController@cfSolved');
+    Route::post('/cf/unsolved/{id}', 'OjController@cfUnsolved');
+
     Route::post('/uva/{id}', 'OjController@uvaOverall');
     Route::get('/uva/refresh', 'OjController@refreshUva');
     

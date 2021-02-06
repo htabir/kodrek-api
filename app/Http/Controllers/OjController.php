@@ -54,7 +54,7 @@ class OjController extends Controller
         return response()->json(['status' => 'ok', 'OJ' => $oj]);
     }
 
-    public function cfOverall($id){
+    public function cfStats($id){
 
         $stats = Oj::where('username', $id)
                     ->where('ojname', 'CF')->first();
@@ -154,10 +154,27 @@ class OjController extends Controller
             'disAc'     => count($disAc),            
             'totalAc'   =>  $totalAc,
             'totalWa'   =>  $totalWa,
-            'totalOt'   =>  $totalOt,
-            'solvedSet' => $disAc,
-            'unsolvedSet'   => $disUn
+            'totalOt'   =>  $totalOt
         ]); 
+    }
+
+    public function cfSolved($id){
+        $stats = Oj::where('username', $id)
+                    ->where('ojname', 'CF')->first();
+
+        $disAc = ($stats['solvedSet'] == null) ? array() : $stats['solvedSet'];
+
+        return response()->json($disAc, 200);
+    }
+
+    
+    public function cfUnsolved($id){
+        $stats = Oj::where('username', $id)
+                    ->where('ojname', 'CF')->first();
+
+        $disAc = ($stats['unsolvedSet'] == null) ? array() : $stats['unsolvedSet'];
+
+        return response()->json($disAc, 200);
     }
 
     public function uvaOverall($id){
