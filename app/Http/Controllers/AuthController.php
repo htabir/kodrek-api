@@ -40,7 +40,8 @@ class AuthController extends Controller
         return response()->json([
             'name'  => $user->name,
             'username'  => $user->username,
-            'timezone'  => $user->timezone,
+            'dailyGoal'  => $user->dailyGoal,
+            'presetDailyGoal'  => $user->presetDailyGoal,
             'token' => $token
         ], 200);
     }
