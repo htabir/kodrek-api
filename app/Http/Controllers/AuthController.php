@@ -25,7 +25,7 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 400);
         }
 
-        $token_validity = 7*24*60;
+        $token_validity = 24 * 60;
 
         $this->guard()->factory()->setTTL($token_validity);
 
@@ -117,10 +117,14 @@ class AuthController extends Controller
 
 
     protected function respondWithToken($token){
-        $token_validity = 7*24*60;
+        $token_validity = 24 * 60;
 
         $this->guard()->factory()->setTTL($token_validity);
-        return response()->json($token, 200);
+        return response()->json([
+            'token' => $token,
+            'token_type' => 'bearer',
+            'token_validity' => $this->guard()->factory()->getTTL()*60
+        ]);
     }
 
     protected function guard(){
