@@ -17,10 +17,8 @@ class CreatePresetProblemsTable extends Migration
             $table->id();
             $table->integer('presetId');
             $table->string('ojName', 5);
-            $table->string('problemId', 25);
+            $table->json('problemId')->default(null);
             $table->timestamps();
-
-            //$table->foreign('presetId')->constrained('presets');
         });
     }
 

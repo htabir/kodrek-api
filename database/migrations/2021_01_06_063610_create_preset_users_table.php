@@ -16,14 +16,13 @@ class CreatePresetUsersTable extends Migration
         Schema::create('preset_users', function (Blueprint $table) {
             $table->id();
             $table->string('username');
-            $table->integer('presetId');
+            $table->bigInteger('presetId');
             $table->boolean('status')->default(true);
             $table->boolean('like')->default(false);
             $table->integer('days')->default(0);
             $table->timestamps();
 
             $table->foreign('username')->references('username')->on('users');
-            //$table->foreign('presetId')->references('presetId')->on('presets');
         });
     }
 

@@ -18,25 +18,29 @@ class PresetController extends Controller
     }
 
     public function create(Request $request){
-        $name = $request['name'];
-        $owner = $request['owner'];
-        
-        $cf = $request['set']['cf'];
-        $uva = $request['set']['uva'];
+        $cf = json_encode($request['set']['cf']);
+        $uva = json_encode($request['set']['uva']);
 
         $preset = Preset::create(['name' => $request['name'], 'ownerName' => $request['owner']]);
 
-        foreach($cf as $item){
-            $prob = PresetProblem::create(['presetId' => $preset['id'], 'ojName' => 'cf', 'problemId' => $item]);
-        }
+        $prob = PresetProblem::create([
+            'presetId' => $preset['id'], 
+            'ojName' => 'cf', 
+            'problemId' => $cf]);
 
-        foreach($uva as $item){
-            $prob = PresetProblem::create(['presetId' => $preset['id'], 'ojName' => 'uva', 'problemId' => $item]);
-        }
+            $prob = PresetProblem::create([
+                'presetId' => $preset['id'], 
+                'ojName' => 'uva', 
+                'problemId' => $uva]);
 
+        return response()->json(["status"=>"Created Successfully"], 200);
     }
 
     public function setPreset($presetId){
+        $found = Preset::where('id', $presetId)->first();
+        if($found == null){
+            return response()->json(["status" => "Preset Not Found"], 404);
+        }
 
         if(count($this->user->preset_users) == 0){
             $presetUser = PresetUser::create([
@@ -46,7 +50,6 @@ class PresetController extends Controller
                 ]);
             return response()->json([
                 'status'    =>  'ok',
-                'details'   =>  $this->user->preset_users->where('status', 1),
             ]);
         }else{
             $presetUser = $this->user->preset_users->where('username', $this->user['username'])
@@ -68,7 +71,6 @@ class PresetController extends Controller
                     ]);
                 return response()->json([
                     'status'    =>  'ok',
-                    'details'   =>  $this->user->preset_users->where('status', 1),
                 ]);
             }
 
@@ -76,7 +78,6 @@ class PresetController extends Controller
 
             return response()->json([
                 'status'    =>  'ok',
-                'details'   =>  $this->user->preset_users->where('status', 1),
             ]);
         }
                  
@@ -91,13 +92,13 @@ class PresetController extends Controller
         }else{
             $activePreset = $this->user->preset_users->where('status', 1)->first();
             $problemSet = PresetProblem::where('presetId', $activePreset['presetId'])->get();
-
-            $problemSet = json_decode($problemSet);
-            shuffle($problemSet);
-
-            return $problemSet;
+            $preset = array();
+            $preset['id'] = $activePreset['id'];
+            foreach($problemSet as $set){
+                $preset[$set['ojName']] = $set['problemId'];
+            }
+            return $preset;
         }
-
     }
 
     

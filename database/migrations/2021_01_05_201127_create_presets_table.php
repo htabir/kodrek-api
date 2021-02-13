@@ -18,6 +18,7 @@ class CreatePresetsTable extends Migration
             $table->string('name');
             $table->boolean('owner')->default(false);
             $table->string('ownerName');
+            $table->tinyInteger('viewer')->default(1);
             $table->timestamps();
         });
     }
