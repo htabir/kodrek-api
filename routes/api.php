@@ -58,7 +58,8 @@ Route::group([
 ], function ($router){
     Route::post('/create', 'PresetController@create');
     Route::post('/set/{presetId}', 'PresetController@setPreset');
-    Route::post('/stats/{id}', 'PresetController@stats');
+    Route::post('/stats/{username}', 'PresetController@stats');
+    Route::post('/list', 'PresetController@presetList');
 });
 
 

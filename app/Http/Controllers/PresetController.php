@@ -48,9 +48,7 @@ class PresetController extends Controller
                 'presetId' => $presetId, 
                 'status' =>    true,
                 ]);
-            return response()->json([
-                'status'    =>  'ok',
-            ]);
+            return response()->json($this->presetDetails($presetId), 200);
         }else{
             $presetUser = $this->user->preset_users->where('username', $this->user['username'])
                                      ->where('status', 1)->first();
@@ -69,38 +67,80 @@ class PresetController extends Controller
                     'presetId' => $presetId, 
                     'status' =>    1,
                     ]);
-                return response()->json([
-                    'status'    =>  'ok',
-                ]);
+                return response()->json($this->presetDetails($presetId), 200);
             }
 
             $presetUser->first()->update(['status' => 1]);
 
-            return response()->json([
-                'status'    =>  'ok',
-            ]);
+            return response()->json($this->presetDetails($presetId), 200);
         }
                  
     }
 
-    public function stats($id){
-        if(count($this->user->preset_users) == 0){
-            return response()->json([
-                'status'    => 'failed',
-                'deatails'  =>  null
-            ]);
+    public function stats($username){
+        $found = PresetUser::where("username", $username)->where("status", 1)->first();
+        if($found == null){
+            return response()->json(["status" => "No Registered Preset"], 404);
         }else{
-            $activePreset = $this->user->preset_users->where('status', 1)->first();
-            $problemSet = PresetProblem::where('presetId', $activePreset['presetId'])->get();
-            $preset = array();
-            $preset['id'] = $activePreset['id'];
-            foreach($problemSet as $set){
-                $preset[$set['ojName']] = $set['problemId'];
-            }
-            return $preset;
+            return response()->json($this->presetDetails($found['presetId']), 200);
         }
     }
 
+    public function presetDetails($presetId){
+        $problemSet = PresetProblem::where('presetId', $presetId)->get();
+        $preset = array();
+        $preset['id'] = $presetId;
+        foreach($problemSet as $set){
+            $preset[$set['ojName']] = json_decode($set['problemId']);
+        }
+        $presetUser = $this->user->preset_users->where('presetId', $presetId)->first();
+        if($presetUser == null){
+            $preset['days'] = 0;
+            $preset['checkpoint'] = time();
+        }else{
+            $preset['days'] = $presetUser['days'];
+            $preset['checkpoint'] = strtotime($presetUser['updated_at']);
+        }
+        return $preset;
+    }
+
+    public function presetList(){
+        $list = Preset::where('viewer', 1)->orWhere('ownerName', $this->user->username)->get();
+        $id = array();
+        $name = array();
+        $total = array();
+        $touch = array();
+        $like = array();
+        $days = array();
+        foreach($list as $l){
+            array_push($id, $l["id"]);
+            array_push($name, $l["name"]);
+            array_push($touch, count(PresetUser::where("presetId", $l["id"])->get()));
+            array_push($like, count(PresetUser::where("presetId", $l["id"])->where("like", 1)->get()));
+            $presetProbs = PresetProblem::where("presetId", $l["id"])->get();
+            $cc = 0;
+            foreach($presetProbs as $pp){
+                $cc+= count(json_decode($pp["problemId"]));
+            }
+            array_push($total, $cc);
+            $presetUser = PresetUser::where("presetId", $l["id"])->first();
+            if($presetUser == null){
+                array_push($days, 0);
+            }else if($presetUser["status"] == 1){
+                array_push($days, (time() - strtotime($presetUser["updated_at"]) + $presetUser["days"]));
+            }else{
+                array_push($days, ($presetUser["days"]));
+            }
+        }
+        return response()->json([
+            "id"    =>  $id,
+            "name"  =>  $name,
+            "total" =>  $total,
+            "touch" =>  $touch,
+            "like"  =>  $like,
+            "days"  =>  $days
+        ], 200);
+    }
     
     protected function guard(){
         return Auth::guard();
