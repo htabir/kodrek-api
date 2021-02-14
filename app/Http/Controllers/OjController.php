@@ -154,7 +154,9 @@ class OjController extends Controller
             'disAc'     => count($disAc),            
             'totalAc'   =>  $totalAc,
             'totalWa'   =>  $totalWa,
-            'totalOt'   =>  $totalOt
+            'totalOt'   =>  $totalOt,
+            'solvedSet' => $disAc,
+            'unsolvedSet'   => $disUn
         ]); 
     }
 
@@ -255,7 +257,9 @@ class OjController extends Controller
             'disAc'     => count($disAc),            
             'totalAc'   =>  $totalAc,
             'totalWa'   =>  $totalWa,
-            'totalOt'   =>  $totalOt
+            'totalOt'   =>  $totalOt,
+            'solvedSet' => $disAc,
+            'unsolvedSet'   => $disUn
         ]); 
 
     }
