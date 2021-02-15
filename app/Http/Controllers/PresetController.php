@@ -88,8 +88,11 @@ class PresetController extends Controller
 
     public function presetDetails($presetId){
         $problemSet = PresetProblem::where('presetId', $presetId)->get();
+        $presetInfo = Preset::where('id', $presetId)->first();
         $preset = array();
-        $preset['id'] = $presetId;
+        $preset['presetId'] = $presetId;
+        $preset['name'] = $presetInfo["name"];
+        $preset['owner'] = $presetInfo["ownerName"];
         foreach($problemSet as $set){
             $preset[$set['ojName']] = json_decode($set['problemId']);
         }
@@ -101,6 +104,7 @@ class PresetController extends Controller
             $preset['days'] = $presetUser['days'];
             $preset['checkpoint'] = strtotime($presetUser['updated_at']);
         }
+        $preset['like'] = $presetUser['like'];
         return $preset;
     }
 

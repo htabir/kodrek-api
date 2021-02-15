@@ -160,24 +160,24 @@ class OjController extends Controller
         ]); 
     }
 
-    public function cfSolved($id){
-        $stats = Oj::where('username', $id)
-                    ->where('ojname', 'CF')->first();
+    // public function cfSolved($id){
+    //     $stats = Oj::where('username', $id)
+    //                 ->where('ojname', 'CF')->first();
 
-        $disAc = ($stats['solvedSet'] == null) ? array() : $stats['solvedSet'];
+    //     $disAc = ($stats['solvedSet'] == null) ? array() : $stats['solvedSet'];
 
-        return response()->json($disAc, 200);
-    }
+    //     return response()->json($disAc, 200);
+    // }
 
     
-    public function cfUnsolved($id){
-        $stats = Oj::where('username', $id)
-                    ->where('ojname', 'CF')->first();
+    // public function cfUnsolved($id){
+    //     $stats = Oj::where('username', $id)
+    //                 ->where('ojname', 'CF')->first();
 
-        $disAc = ($stats['unsolvedSet'] == null) ? array() : $stats['unsolvedSet'];
+    //     $disAc = ($stats['unsolvedSet'] == null) ? array() : $stats['unsolvedSet'];
 
-        return response()->json($disAc, 200);
-    }
+    //     return response()->json($disAc, 200);
+    // }
 
     public function uvaStats($id){
         // if($id == 'me'){
@@ -264,24 +264,24 @@ class OjController extends Controller
 
     }
 
-    public function uvaSolved($id){
-        $stats = Oj::where('username', $id)
-                    ->where('ojname', 'UVA')->first();
+    // public function uvaSolved($id){
+    //     $stats = Oj::where('username', $id)
+    //                 ->where('ojname', 'UVA')->first();
 
-        $disAc = ($stats['solvedSet'] == null) ? array() : $stats['solvedSet'];
+    //     $disAc = ($stats['solvedSet'] == null) ? array() : $stats['solvedSet'];
 
-        return response()->json($disAc, 200);
-    }
+    //     return response()->json($disAc, 200);
+    // }
 
     
-    public function uvaUnsolved($id){
-        $stats = Oj::where('username', $id)
-                    ->where('ojname', 'UVA')->first();
+    // public function uvaUnsolved($id){
+    //     $stats = Oj::where('username', $id)
+    //                 ->where('ojname', 'UVA')->first();
 
-        $disAc = ($stats['unsolvedSet'] == null) ? array() : $stats['unsolvedSet'];
+    //     $disAc = ($stats['unsolvedSet'] == null) ? array() : $stats['unsolvedSet'];
 
-        return response()->json($disAc, 200);
-    }
+    //     return response()->json($disAc, 200);
+    // }
 
     public function refreshUva(){
 

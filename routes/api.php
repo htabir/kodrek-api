@@ -60,6 +60,7 @@ Route::group([
     Route::post('/set/{presetId}', 'PresetController@setPreset');
     Route::post('/stats/{username}', 'PresetController@stats');
     Route::post('/list', 'PresetController@presetList');
+    Route::post('/details/{id}', 'PresetController@presetDetails');
 });
 
 
