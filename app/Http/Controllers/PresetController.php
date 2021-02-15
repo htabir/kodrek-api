@@ -100,11 +100,13 @@ class PresetController extends Controller
         if($presetUser == null){
             $preset['days'] = 0;
             $preset['checkpoint'] = time();
+            $preset['like'] = 0;
         }else{
             $preset['days'] = $presetUser['days'];
             $preset['checkpoint'] = strtotime($presetUser['updated_at']);
+            $preset['like'] = $presetUser['like'];
         }
-        $preset['like'] = $presetUser['like'];
+        
         return $preset;
     }
 
