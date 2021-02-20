@@ -103,15 +103,15 @@ class AuthController extends Controller
         $oj->save();
     }
 
-    public function changeDailyGoal(Request $request){
+    public function changeDailyGoal($goal){
         $user = $this->guard()->user();
-        User::where('username', $user->username)->update(['dailyGoal'=>$request->goal]);
+        User::where('username', $user->username)->update(['dailyGoal'=>$goal]);
         return response()->json(['status' => 'CHANGED SUCCESSFULLY'], 200);
     }
 
-    public function changePresetGoal(Request $request){
+    public function changePresetGoal($goal){
         $user = $this->guard()->user();
-        User::where('username', $user->username)->update(['presetDailyGoal'=>$request->goal]);
+        User::where('username', $user->username)->update(['presetDailyGoal'=>$goal]);
         return response()->json(['status' => 'CHANGED SUCCESSFULLY'], 200);
         
     }

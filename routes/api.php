@@ -24,8 +24,8 @@ Route::group([
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');
     Route::post('change/password', 'AuthController@changePassword');
-    Route::post('change/dailyGoal', 'AuthController@changedailyGoal');
-    Route::post('change/presetDailyGoal', 'AuthController@changePresetGoal');
+    Route::post('change/dailyGoal/{goal}', 'AuthController@changedailyGoal');
+    Route::post('change/presetDailyGoal/{goal}', 'AuthController@changePresetGoal');
     //checking
     Route::post('check/email', 'AuthController@checkEmail');
     Route::post('check/username', 'AuthController@checkUsername');
