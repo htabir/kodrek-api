@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Oj;
 use App\Models\User;
+use App\Rules\MatchOldPassword;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -34,8 +35,6 @@ class AuthController extends Controller
         }
 
         $user = $this->guard()->user();
-
-
 
         return response()->json([
             'name'  => $user->name,
@@ -104,11 +103,39 @@ class AuthController extends Controller
         $oj->save();
     }
 
+    public function changeDailyGoal(Request $request){
+        $user = $this->guard()->user();
+        User::where('username', $user->username)->update(['dailyGoal'=>$request->goal]);
+        return response()->json(['status' => 'CHANGED SUCCESSFULLY'], 200);
+    }
+
+    public function changePresetGoal(Request $request){
+        $user = $this->guard()->user();
+        User::where('username', $user->username)->update(['presetDailyGoal'=>$request->goal]);
+        return response()->json(['status' => 'CHANGED SUCCESSFULLY'], 200);
+        
+    }
+
+    public function changePassword(Request $request){
+        $validator = Validator::make($request->all(), [
+            'current_password' => ['required', new MatchOldPassword],
+            'new_password' => ['required'],
+        ]);
+        
+        if($validator->fails()){
+            return response()->json(['status' => 'Wrong Current Password'], 422);
+        }
+        User::find(auth()->user()->id)->update(['password'=> bcrypt($request->new_password)]);
+        
+        return response()->json(['status' => 'CHANGED SUCCESSFULLY'], 200);
+        
+    }
+
     public function logout(){
         
         $this->guard()->logout();
+        return response()->json(['message' => 'Successfully logged out'], 200);
 
-        return response()->json(['message' => 'Successfully logged out']);
     }
 
     public function refresh(){

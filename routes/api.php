@@ -23,6 +23,9 @@ Route::group([
     Route::post('register', 'AuthController@register');
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');
+    Route::post('change/password', 'AuthController@changePassword');
+    Route::post('change/dailyGoal', 'AuthController@changedailyGoal');
+    Route::post('change/presetDailyGoal', 'AuthController@changePresetGoal');
     //checking
     Route::post('check/email', 'AuthController@checkEmail');
     Route::post('check/username', 'AuthController@checkUsername');
@@ -61,6 +64,7 @@ Route::group([
     Route::post('/stats/{username}', 'PresetController@stats');
     Route::post('/list', 'PresetController@presetList');
     Route::post('/details/{id}', 'PresetController@presetDetails');
+    Route::post('/like', 'PresetController@like');
 });
 
 

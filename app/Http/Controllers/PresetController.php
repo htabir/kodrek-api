@@ -110,6 +110,15 @@ class PresetController extends Controller
         return $preset;
     }
 
+    public function like(){
+        $found = PresetUser::where("username", Auth::user()->username)->where("status", 1)->first();
+        $like = ($found->like == 1) ? 0 : 1;
+        PresetUser::where("username", Auth::user()->username)->where("status", 1)
+        ->update(["like"=>$like]);
+
+        return response()->json(["status"=>"like updated successfully"], 200);
+    }
+
     public function presetList(){
         $list = Preset::where('viewer', 1)->orWhere('ownerName', $this->user->username)->get();
         $id = array();
